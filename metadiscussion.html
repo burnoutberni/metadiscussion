@@ -1,0 +1,29 @@
+<head>
+  <title>metadiscussion</title>
+</head>
+
+<body>
+  {{> loginButtons}}
+
+  {{#if currentUser}}
+    <button class="new-speaker">add me</button>
+    <button class="next">next speaker</button>
+  {{/if}}
+
+  {{isAdmin}}
+
+  <ul>
+    {{#each speakers}}
+      {{> speaker}}
+    {{/each}}
+  </ul>
+</body>
+
+<template name="speaker">
+  <li>
+    {{#if isOwner}}
+      <button class="delete">&times;</button>
+    {{/if}}
+    <span class="text">{{username}}</span>
+  </li>
+</template>

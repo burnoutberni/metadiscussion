@@ -1,11 +1,26 @@
+html {
+  height: 100%;
+}
+
 body {
   font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
   font-size: 14px;
+  background: linear-gradient(45deg,  #fdcbde 0%,#f4f4a6 33%,#b4edf3 66%,#fdcbde 100%);
 }
 
-#login-buttons {
-  margin-left: 10px;
-  display:block;
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+}
+
+footer {
+  margin-top: 50px;
+}
+
+.top {
+  float: right;
 }
 
 h1 {
@@ -25,8 +40,8 @@ h1 {
 
 .next {
   color: white;
-  background: red;
-  border: red;
+  background: #D9534F;
+  border: #D43F3A;
   border-radius: 6px;
   font-size: 1em;
   padding: 1em;
@@ -41,6 +56,24 @@ h1 {
   position: relative;
 }
 
+.up {
+  font-weight: bold;
+  background: none;
+  font-size: 1em;
+  border: none;
+  position: relative;
+  float: right;
+}
+
+.down {
+  font-weight: bold;
+  background: none;
+  font-size: 1em;
+  border: none;
+  position: relative;
+  float: right;
+}
+
 ul {
   padding: 0;
 }
@@ -52,6 +85,16 @@ li {
   border-bottom: #eee solid 1px;
 }
 
-li:nth-child(1) {
+.values:nth-child(1) {
   background-color: #c8e6c9;
+  font-weight: bold;
+}
+
+.values:nth-child(1)::before {
+  content: "now talking: ";
+  font-weight: bold;
+}
+
+.no-values {
+  font-weight: bold;
 }

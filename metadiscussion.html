@@ -3,27 +3,58 @@
 </head>
 
 <body>
-  {{> loginButtons}}
+  <div class="container">
 
-  {{#if currentUser}}
-    <button class="new-speaker">add me</button>
-    <button class="next">next speaker</button>
-  {{/if}}
+    {{#if currentUser}}
+      <div class="top">
+        current user: {{> loginButtons}}
+      </div>
+    {{/if}}
 
-  {{isAdmin}}
+    {{#unless currentUser}}
+      <p>{{> loginButtons}} to add yourself to the speakers list.</p>
+    {{/unless}}
 
-  <ul>
-    {{#each speakers}}
-      {{> speaker}}
-    {{/each}}
-  </ul>
+    <div class="buttons">
+      {{#if currentUser}}
+        <button class="new-speaker">add me to the discussion</button>
+      {{/if}}
+
+      {{#if isAdmin}}
+        <button class="next">next speaker</button>
+      {{/if}}
+    </div>
+
+    <ul>
+      {{#each speakers}}
+        {{> speaker}}
+      {{/each}}
+      {{#if noSpeakers}}
+        <li class="no-values">
+          <span>nobody wants to speak.</span>
+        </li>
+      {{/if}}
+    </ul>
+
+    <footer>
+      Made with &lt;3 at <a href="https://metalab.at" target="_blank">Metalab</a>. Fork it on <a href="https://github.com/burnoutberni/metadiscussion" target="_blank">Github</a>.
+    </footer>
+  </div>
 </body>
 
 <template name="speaker">
-  <li>
+  <li class="values">
     {{#if isOwner}}
       <button class="delete">&times;</button>
+    {{else}}
+      {{#if isAdmin}}
+        <button class="delete">&times;</button>
+      {{/if}}
     {{/if}}
     <span class="text">{{username}}</span>
+    {{#if isAdmin}}
+      <button class="up">&#9650;</button>
+      <button class="down">&#9660;</button>
+    {{/if}}
   </li>
 </template>

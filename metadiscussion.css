@@ -90,9 +90,17 @@ li {
   font-weight: bold;
 }
 
-.values:nth-child(1)::before {
+.values:nth-child(1) > .text::before {
   content: "now talking: ";
   font-weight: bold;
+}
+
+.values:nth-child(1) > .down {
+  display: none;
+}
+
+.values:last-child > .up {
+  display: none;
 }
 
 .no-values {

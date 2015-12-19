@@ -4,26 +4,29 @@
 
 <body>
   <div class="container">
+    {{#unless listView}}
 
-    {{#if currentUser}}
-      <div class="top">
-        current user: {{> loginButtons}}
-      </div>
-    {{/if}}
-
-    {{#unless currentUser}}
-      <p>{{> loginButtons}} to add yourself to the speakers list.</p>
-    {{/unless}}
-
-    <div class="buttons">
       {{#if currentUser}}
-        <button class="new-speaker">add me to the discussion</button>
+        <div class="top">
+          current user: {{> loginButtons}}
+        </div>
       {{/if}}
 
-      {{#if isAdmin}}
-        <button class="next">next speaker</button>
-      {{/if}}
-    </div>
+      {{#unless currentUser}}
+        <p>{{> loginButtons}} to add yourself to the speakers list.</p>
+      {{/unless}}
+
+      <div class="buttons">
+        {{#if currentUser}}
+          <button class="new-speaker">add me to the discussion</button>
+        {{/if}}
+
+        {{#if isAdmin}}
+          <button class="next">next speaker</button>
+        {{/if}}
+      </div>
+
+    {{/unless}}
 
     <ul>
       {{#each speakers}}

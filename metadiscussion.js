@@ -35,6 +35,9 @@ if (Meteor.isClient) {
     },
     noSpeakers: function () {
       return Speakers.findOne({}) ? false : true;
+    },
+    listView: function () {
+      return window.location.hash === "#list" ? true : false;
     }
   });
 

@@ -7,6 +7,25 @@ if (Meteor.isClient) {
 
   Template.body.helpers({
     speakers: function () {
+      //if the user is the first user on the list now ...
+      if (Meteor.userId() === Speakers.findOne({}, { sort: { count: 1 } }).owner) {
+        // create a notification text ...
+        var notificationText = Meteor.user().username + ", you're up! Join the conversation now."
+
+        if ("Notification" in window && Notification.permission === "granted") {
+          // and push it, if the user uses a browser with Notification() support and has granted us access ...
+          var notification = new Notification(notificationText);
+        } else if ("Notification" in window && Notification.permission !== "denied") {
+          // or ask for access and push it then, if we haven't asked yet
+          Notification.requestPermission(function (permission) {
+            if (permission === "granted") {
+              var notification = new Notification(notificationText);
+            }
+          });
+        }
+      }
+
+      // also, return all the speakers, of course
       return Speakers.find({}, { sort: { count: 1 } });
     },
     isAdmin: function () {
@@ -75,15 +94,19 @@ Meteor.methods({
     count++;
   },
   deleteSpeaker: function (speakerId) {
-    if (typeof Speakers.findOne(speakerId) == "undefined") {
+    var currentSpeaker = Speakers.findOne(speakerId);
+    var currentSpeakerCount = currentSpeaker.count;
+    if (typeof currentSpeaker == "undefined") {
       throw new Meteor.Error("no-more-speakers");
     }
-    if (Speakers.findOne(speakerId).owner !== Meteor.userId() &&
+    if (currentSpeaker.owner !== Meteor.userId() &&
         ! Meteor.user().admin) {
       throw new Meteor.Error("not-authorized");
     }
 
     Speakers.remove(speakerId);
+    Speakers.update({count: {$gt: currentSpeakerCount}}, {$inc: {count: -1}}, {multi: true});
+    count--;
   },
   moveUp: function (speakerId) {
     if (Speakers.findOne(speakerId).owner !== Meteor.userId() &&

@@ -12,6 +12,9 @@ if (Meteor.isClient) {
         // create a notification text ...
         var notificationText = Meteor.user().username + ", you're up! Join the conversation now."
 
+        // invoke Android app notifications
+        Meteor.call("userNotification", notificationText, "Chop chop!", Meteor.userId());
+
         if ("Notification" in window && Notification.permission === "granted") {
           // and push it, if the user uses a browser with Notification() support and has granted us access ...
           var notification = new Notification(notificationText);

@@ -1,5 +1,5 @@
 App.info({
-  id: 'su.nini.metadiscussion'
+  id: 'su.nini.metadiscussion',
   name: 'metadiscussion',
   description: 'Metalab-approved solution to ALL discussion problems.',
   author: 'nini',

@@ -3,8 +3,10 @@ Meteor.subscribe("userData");
 
 Template.body.helpers({
   speakers: function () {
+    var firstSpeaker = Speakers ? Speakers.findOne({}, { sort: { count: 1 } }) : undefined;
+
     //if the user is the first user on the list now ...
-    if (Meteor.userId() === Speakers.findOne({}, { sort: { count: 1 } }).owner) {
+    if (firstSpeaker !== undefined && Meteor.userId() === firstSpeaker.owner) {
       // create a notification text ...
       var notificationText = Meteor.user().username + ", you're up! Join the conversation now."
 
@@ -28,9 +30,10 @@ Template.body.helpers({
     return Speakers.find({}, { sort: { count: 1 } });
   },
   isAdmin: function () {
-    var userId = Meteor.userId();
-    var admin = Meteor.users.findOne(userId).admin;
-    return admin;
+    var user = Meteor.user();
+    var admin = user && user.admin === true;
+
+    return admin ? true : false;
   },
   noSpeakers: function () {
     return Speakers.findOne({}) ? false : true;
@@ -54,9 +57,10 @@ Template.speaker.helpers({
     return this.owner === Meteor.userId();
   },
   isAdmin: function () {
-    var userId = Meteor.userId();
-    var admin = Meteor.users.findOne(userId).admin;
-    return admin;
+    var user = Meteor.user();
+    var admin = user && user.admin === true;
+
+    return admin ? true : false;
   }
 });
 

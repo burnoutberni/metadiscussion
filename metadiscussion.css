@@ -106,3 +106,23 @@ li {
 .no-values {
   font-weight: bold;
 }
+
+.top .accounts-dialog {
+  left: auto !important;
+  right: 1px !important;
+}
+
+.top .login-close-text {
+  float: right !important;
+}
+
+@media screen and (max-width: 600px){
+  .new-speaker {
+    width: 100%;
+  }
+
+  .next {
+    width: 100%;
+    margin-top: 5px;
+  }
+}

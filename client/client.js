@@ -51,6 +51,9 @@ Template.discussion.helpers({
   },
   noSpeakers: function () {
     return Discussions.findOne({_id: Session.get('currentDiscussion'), speakers: {$not: {$size: 0}}}) ? false : true;
+  },
+  currentUserInList: function () {
+    return Discussions.findOne({_id: Session.get('currentDiscussion'), "speakers.owner": Meteor.userId()}) ? false : true;
   }
 });
 

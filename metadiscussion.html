@@ -2,49 +2,6 @@
   <title>metadiscussion</title>
 </head>
 
-<body>
-  <!--div class="container">
-    {{#unless listView}}
-
-      {{#if currentUser}}
-        <div class="top">
-          current user: {{> loginButtons}}
-        </div>
-      {{/if}}
-
-      {{#unless currentUser}}
-        <p>{{> loginButtons}} to add yourself to the speakers list.</p>
-      {{/unless}}
-
-      <div class="buttons">
-        {{#if currentUser}}
-          <button class="new-speaker">add me to the discussion</button>
-        {{/if}}
-
-        {{#if isAdmin}}
-          <button class="next">next speaker</button>
-        {{/if}}
-      </div>
-
-    {{/unless}}
-
-    <ul>
-      {{#each speakers}}
-        {{> speaker}}
-      {{/each}}
-      {{#if noSpeakers}}
-        <li class="no-values">
-          <span>nobody wants to speak.</span>
-        </li>
-      {{/if}}
-    </ul>
-
-    <footer>
-      Made with &lt;3 at <a href="https://metalab.at" target="_blank">Metalab</a>. Fork it on <a href="https://github.com/burnoutberni/metadiscussion" target="_blank">Github</a>.
-    </footer>
-  </div-->
-</body>
-
 <template name="ApplicationLayout">
   <div class="container">
     {{> yield}}
@@ -86,7 +43,7 @@
   {{/unless}}
 
   <div class="buttons">
-    {{#if currentUser}}
+    {{#if currentUserInList}}
       <button class="new-speaker">add me to the discussion</button>
     {{/if}}
 

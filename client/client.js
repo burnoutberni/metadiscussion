@@ -13,6 +13,11 @@ Template.discussion.helpers({
       return speaker.count;
     });
 
+    //  ask for Notification access, if we haven't asked yet
+    if ("Notification" in window && Notification.permission !== "denied") {
+      Notification.requestPermission();
+    }
+
     var firstSpeaker = speakers[0] ? speakers[0] : undefined;
 
     //if the user is the first user on the list now ...

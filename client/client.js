@@ -1,11 +1,5 @@
 Meteor.subscribe("discussions");
 
-Template.body.helpers({
-  listView: function () {
-    return window.location.hash === "#list" ? true : false;
-  }
-});
-
 Template.discussion.helpers({
   speakers: function () {
     var discussion = Discussions.findOne({_id: Session.get('currentDiscussion')});
@@ -42,9 +36,6 @@ Template.discussion.helpers({
     }
 
     return speakers;
-
-    //console.log(Discussions.find({_id: Session.get('currentDiscussion')}, {sort: { "speakers.$.count": 1 } }));
-    //return Discussions.findOne({_id: Session.get('currentDiscussion')}, {sort: { "speakers.$.count": 1 } }).speakers;
   },
   isAdmin: function () {
     return Discussions.findOne({_id: Session.get('currentDiscussion')}).owner === Meteor.userId();

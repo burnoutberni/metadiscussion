@@ -28,7 +28,7 @@ h1 {
   margin: 10px 0;
 }
 
-.new-speaker {
+.new-speaker, .new-discussion {
   color: white;
   background: #449D44;
   border: #255625;

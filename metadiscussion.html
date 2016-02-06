@@ -3,7 +3,7 @@
 </head>
 
 <body>
-  <div class="container">
+  <!--div class="container">
     {{#unless listView}}
 
       {{#if currentUser}}
@@ -42,8 +42,70 @@
     <footer>
       Made with &lt;3 at <a href="https://metalab.at" target="_blank">Metalab</a>. Fork it on <a href="https://github.com/burnoutberni/metadiscussion" target="_blank">Github</a>.
     </footer>
-  </div>
+  </div-->
 </body>
+
+<template name="ApplicationLayout">
+  <div class="container">
+    {{> yield}}
+
+    <footer>
+      Made with &lt;3 at <a href="https://metalab.at" target="_blank">Metalab</a>. Fork it on <a href="https://github.com/burnoutberni/metadiscussion" target="_blank">Github</a>.
+    </footer>
+  </div>
+</template>
+
+
+<template name="home">
+  {{#if currentUser}}
+    <div class="top">
+      current user: {{> loginButtons}}
+    </div>
+  {{/if}}
+
+  {{#unless currentUser}}
+    <p>{{> loginButtons}} to add yourself to the speakers list.</p>
+  {{/unless}}
+
+  <div class="buttons">
+    {{#if currentUser}}
+      <button class="new-discussion">start a new discussion</button>
+    {{/if}}
+  </div>
+</template>
+
+<template name="discussion">
+  {{#if currentUser}}
+    <div class="top">
+      current user: {{> loginButtons}}
+    </div>
+  {{/if}}
+
+  {{#unless currentUser}}
+    <p>{{> loginButtons}} to add yourself to the speakers list.</p>
+  {{/unless}}
+
+  <div class="buttons">
+    {{#if currentUser}}
+      <button class="new-speaker">add me to the discussion</button>
+    {{/if}}
+
+    {{#if isAdmin}}
+      <button class="next">next speaker</button>
+    {{/if}}
+  </div>
+
+  <ul>
+    {{#each speakers}}
+      {{> speaker}}
+    {{/each}}
+    {{#if noSpeakers}}
+      <li class="no-values">
+        <span>nobody wants to speak.</span>
+      </li>
+    {{/if}}
+  </ul>
+</template>
 
 <template name="speaker">
   <li class="values">

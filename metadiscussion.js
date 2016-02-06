@@ -1,66 +1,115 @@
-Speakers = new Mongo.Collection("speakers");
-var count = 0;
+Discussions = new Mongo.Collection("discussions");
+
+Router.configure({
+  layoutTemplate: 'ApplicationLayout'
+});
+
+Router.route('/', function () {
+  this.render('Home');
+});
+
+Router.route('/discussion/:_id', function () {
+  this.render('Discussion', {
+    data: function () {
+      if (!Discussions.findOne({_id: this.params._id})) {
+        Meteor.call("newDiscussion", this.params._id);
+      }
+      Session.set('currentDiscussion', this.params._id);
+      return Discussions.findOne({_id: this.params._id});
+    }
+  });
+});
 
 Meteor.methods({
-  addSpeaker: function () {
+  newDiscussion: function (discussionId) {
+    if (discussionId) {
+      return Discussions.insert({
+        _id: discussionId,
+        speakers: [],
+        owner: Meteor.userId(),
+        createdAt: new Date(),
+        count: 0
+      });
+    } else {
+      return Discussions.insert({
+        speakers: [],
+        owner: Meteor.userId(),
+        createdAt: new Date(),
+        count: 0
+      });
+    }
+  },
+  addSpeaker: function (discussionId) {
     if (! Meteor.userId()) {
       throw new Meteor.Error("not-authorized");
     }
 
-    if (Speakers.findOne({owner: Meteor.userId()})) {
-      throw new Meteor.Error("already-in-list");
-    }
+    var allSpeakers = Discussions.findOne({_id: discussionId}).speakers;
+    allSpeakers.forEach(function(speaker) {
+      if(speaker.owner === Meteor.userId()) {
+        throw new Meteor.Error("already-in-list");
+      }
+    });
 
-    Speakers.insert({
+    var count = Discussions.findOne({_id: discussionId}).count;
+
+    Discussions.update({_id: discussionId}, {$addToSet: {speakers: {
       username: Meteor.user().username,
       owner: Meteor.userId(),
       count: count,
       createdAt: new Date()
-    });
-    count++;
+    }}});
+
+    Discussions.update({_id: discussionId}, { $inc: {count: 1}});
   },
-  deleteSpeaker: function (speakerId) {
-    var currentSpeaker = Speakers.findOne(speakerId);
-    var currentSpeakerCount = currentSpeaker.count;
+  deleteSpeaker: function (discussionId, speakerId, speakerCount) {
+    var currentDiscussion = Discussions.findOne({_id: discussionId});
+    var currentSpeaker = currentDiscussion.speakers[0];
+
     if (typeof currentSpeaker == "undefined") {
       throw new Meteor.Error("no-more-speakers");
     }
-    if (currentSpeaker.owner !== Meteor.userId() &&
-        ! Meteor.user().admin) {
+    if (Meteor.userId() !== speakerId &&
+        Meteor.userId() !== currentDiscussion.owner) {
       throw new Meteor.Error("not-authorized");
     }
 
-    Speakers.remove(speakerId);
-    Speakers.update({count: {$gt: currentSpeakerCount}}, {$inc: {count: -1}}, {multi: true});
-    count--;
+    Discussions.update({_id: discussionId}, {$pull: {speakers: {owner: speakerId}}});
+    Discussions.update({_id: discussionId, "speakers.count": {$gt: speakerCount}}, {$inc: {"speakers.$.count": -1}}, {multi: true});
+    Discussions.update({_id: discussionId}, {$inc: {count: -1}});
   },
-  moveUp: function (speakerId) {
-    if (Speakers.findOne(speakerId).owner !== Meteor.userId() &&
-        ! Meteor.user().admin) {
+  moveUp: function (discussionId, speakerId, speakerCount) {
+    if (Meteor.userId() !== speakerId &&
+        Meteor.userId() !== Discussions.findOne({_id: discussionId}).owner) {
       throw new Meteor.Error("not-authorized");
     }
 
-    var speakerCount = Speakers.findOne(speakerId).count;
-    if ( Speakers.update({count: {$eq: speakerCount + 1}}, {$inc: {count: -1}}) ) {
-      Speakers.update(speakerId, {$inc: {count: 1}});
-    }
-  },
-  moveDown: function (speakerId) {
-    if (Speakers.findOne(speakerId).owner !== Meteor.userId() &&
-        ! Meteor.user().admin) {
-      throw new Meteor.Error("not-authorized");
-    }
-
-    var speakerCount = Speakers.findOne(speakerId).count;
-    if ( Speakers.update({count: {$eq: speakerCount - 1}}, {$inc: {count: +1}}) ) {
-      Speakers.update(speakerId, {$inc: {count: -1}});
+    var speakerCountPlusOne = speakerCount + 1;
+    if ( Discussions.update({_id: discussionId, "speakers.count": speakerCountPlusOne}, {$inc: {"speakers.$.count": -1}}) ) {
+      Discussions.update({_id: discussionId, "speakers.owner": speakerId}, {$inc: {"speakers.$.count": 1}});
     }
   },
-  next: function () {
-    if (! Meteor.user().admin) {
+  moveDown: function (discussionId, speakerId, speakerCount) {
+    if (Meteor.userId() !== speakerId &&
+        Meteor.userId() !== Discussions.findOne({_id: discussionId}).owner) {
       throw new Meteor.Error("not-authorized");
     }
 
-    Meteor.call("deleteSpeaker", Speakers.findOne({}));
+    var speakerCountMinusOne = speakerCount - 1;
+    if ( Discussions.update({_id: discussionId, "speakers.count": speakerCountMinusOne}, {$inc: {"speakers.$.count": 1}}) ) {
+      Discussions.update({_id: discussionId, "speakers.owner": speakerId}, {$inc: {"speakers.$.count": -1}});
+    }
+  },
+  next: function (discussionId) {
+    if (Meteor.userId() !== Discussions.findOne({_id: discussionId}).owner) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    var discussion = Discussions.findOne({_id: discussionId});
+    var speakers = _.sortBy(discussion.speakers, function(speaker) {
+      return speaker.count;
+    });
+
+    Meteor.call("deleteSpeaker", discussionId, speakers[0].owner, 0);
   }
 });

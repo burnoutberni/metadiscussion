@@ -111,5 +111,8 @@ Meteor.methods({
     });
 
     Meteor.call("deleteSpeaker", discussionId, speakers[0].owner, 0);
+  },
+  setFirstSpeaker: function (discussionId, firstSpeakerId) {
+    var discussion = Discussions.update({_id: discussionId}, {$set: {firstSpeaker: firstSpeakerId}});
   }
 });

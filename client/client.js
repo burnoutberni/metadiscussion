@@ -15,7 +15,9 @@ Template.discussion.helpers({
     var firstSpeaker = speakers[0] ? speakers[0] : undefined;
 
     //if the user is the first user on the list now ...
-    if (firstSpeaker !== undefined && Meteor.userId() === firstSpeaker.owner) {
+    if (firstSpeaker !== undefined &&
+        firstSpeaker.owner !== discussion.firstSpeaker &&
+        Meteor.userId() === firstSpeaker.owner) {
       // create a notification text ...
       var notificationText = Meteor.user().username + ", you're up! Join the conversation now."
 
@@ -34,6 +36,8 @@ Template.discussion.helpers({
         });
       }
     }
+
+    Meteor.call("setFirstSpeaker", Session.get('currentDiscussion'), firstSpeaker.owner);
 
     return speakers;
   },

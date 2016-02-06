@@ -11,7 +11,7 @@ Router.route('/', function () {
 Router.route('/discussion/:_id', function () {
   this.render('Discussion', {
     data: function () {
-      if (!Discussions.findOne({_id: this.params._id})) {
+      if(typeof Discussions.findOne({_id: this.params._id}) == "undefined") {
         Meteor.call("newDiscussion", this.params._id);
       }
       Session.set('currentDiscussion', this.params._id);
